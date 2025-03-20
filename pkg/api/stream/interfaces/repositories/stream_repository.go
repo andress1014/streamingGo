@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -20,8 +21,17 @@ type streamRepository struct {
 }
 
 func NewStreamRepository() (*streamRepository, error) {
-	// Cargar configuración de AWS con la región correcta
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+	// 🔥 Quemando credenciales (Solo para pruebas locales)
+	awsAccessKey := "ddd"
+	awsSecretKey := "ddddddd/CFfdPAUYRsZNV3lrOOldRtb8Tg7wg"
+	awsRegion := "us-east-1"
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(awsRegion),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+			awsAccessKey, awsSecretKey, "",
+		)),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -30,8 +40,8 @@ func NewStreamRepository() (*streamRepository, error) {
 
 	return &streamRepository{
 		s3Client: client,
-		bucket:   "test-go-streaming", // 🔹 Nombre del bucket desde la imagen
-		region:   "us-east-1",
+		bucket:   "andress1014-go-stream", // Nombre del bucket
+		region:   awsRegion,
 	}, nil
 }
 
